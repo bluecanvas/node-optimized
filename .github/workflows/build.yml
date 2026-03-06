@@ -26,7 +26,7 @@ jobs:
       - name: Build Node.js
         run: |
           docker buildx build \
-            --platform linux/${{ matrix.arch }} \
+            --progress=plain \
             --build-arg NODE_VERSION=${{ inputs.node_version }} \
             --output type=local,dest=out \
             .
