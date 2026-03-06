@@ -1,6 +1,6 @@
 FROM alpine:3.21
 
-ARG NODE_VERSION=24.1.4
+ARG NODE_VERSION=24.14.0
 
 # Required: Install runtime dependencies and node-optimized
 RUN apk add --no-cache \
