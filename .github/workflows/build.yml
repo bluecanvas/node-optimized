@@ -4,16 +4,20 @@ on:
   workflow_dispatch:
     inputs:
       node_version:
-        description: 'Node.js version tag (e.g., v24.1.4)'
+        description: 'Node.js version tag (e.g., v24.14.0)'
         required: true
         type: string
 
 jobs:
   build:
-    runs-on: ubuntu-latest
     strategy:
       matrix:
-        arch: [arm64, amd64]
+        include:
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+          - arch: amd64
+            runner: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
 
