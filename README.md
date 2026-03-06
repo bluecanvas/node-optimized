@@ -20,10 +20,22 @@ See [Releases](https://github.com/bluecanvas/node-optimized/releases).
 
 See [example.Dockerfile](example.Dockerfile) for a working example.
 
+For auto-resolving the latest version at build time, see [example-latest.Dockerfile](example-latest.Dockerfile).
+
 ## Verifying Checksums
 
 Each release includes `checksums.sha256`:
 
 ```bash
 sha256sum -c checksums.sha256
+```
+
+## Building Locally
+
+```bash
+# Build for arm64 and amd64
+make NODE_VERSION=v24.1.4
+
+# Build and publish to GitHub
+make release NODE_VERSION=v24.1.4
 ```
