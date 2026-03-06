@@ -1,0 +1,73 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      node_version:
+        description: 'Node.js version tag (e.g., v24.1.4)'
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [arm64, amd64]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build Node.js
+        run: |
+          docker buildx build \
+            --platform linux/${{ matrix.arch }} \
+            --build-arg NODE_VERSION=${{ inputs.node_version }} \
+            --output type=local,dest=out \
+            .
+
+      - name: Create tarball
+        run: |
+          version="${{ inputs.node_version }}"
+          version="${version#v}"  # Remove leading 'v'
+          tar -czvf node-${version}-${{ matrix.arch }}.tar.gz -C out/usr/local .
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: node-${{ matrix.arch }}
+          path: "*.tar.gz"
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Generate checksums
+        run: |
+          cd artifacts
+          sha256sum *.tar.gz > checksums.sha256
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.node_version }}
+          name: Node.js ${{ inputs.node_version }}
+          files: |
+            artifacts/*.tar.gz
+            artifacts/checksums.sha256
+          body: |
+            Node.js ${{ inputs.node_version }} with V8 pointer compression enabled.
+
+            **Requires Alpine ≥3.22**
+
+            ## Checksums
+            ```
+            $(cat artifacts/checksums.sha256)
+            ```
