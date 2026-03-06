@@ -4,7 +4,7 @@ Optimized Node.js binaries for Blue Canvas production workloads.
 
 ## Why
 
-Inspired by [node-caged](https://github.com/bengl/node-caged). We needed binaries we could drop into our existing Alpine-based infrastructure.
+Inspired by [node-caged](https://github.com/platformatic/node-caged) ([blog post](https://blog.platformatic.dev/we-cut-nodejs-memory-in-half)). We needed binaries we could drop into our existing Alpine-based infrastructure.
 
 ## Optimizations
 
