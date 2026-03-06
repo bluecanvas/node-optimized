@@ -59,19 +59,19 @@ jobs:
           sha256sum *.tar.gz > checksums.sha256
 
       - name: Create Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ inputs.node_version }}
-          name: Node.js ${{ inputs.node_version }}
-          files: |
-            artifacts/*.tar.gz
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${{ inputs.node_version }}"
+          gh release create "$version" \
+            --title "Node.js $version" \
+            --notes "Node.js $version with V8 pointer compression enabled.
+
+          **Requires Alpine ≥3.22**
+
+          ## Checksums
+          \`\`\`
+          $(cat artifacts/checksums.sha256)
+          \`\`\`" \
+            artifacts/*.tar.gz \
             artifacts/checksums.sha256
-          body: |
-            Node.js ${{ inputs.node_version }} with V8 pointer compression enabled.
-
-            **Requires Alpine ≥3.22**
-
-            ## Checksums
-            ```
-            $(cat artifacts/checksums.sha256)
-            ```
